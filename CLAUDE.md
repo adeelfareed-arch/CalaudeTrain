@@ -16,9 +16,15 @@ There is no test runner configured.
 
 Small Vite + React 19 (JavaScript, no TypeScript) single-page app. This is a course starter project (see README) that intentionally contains a bug, poor UI, and messy code, so expect rough edges.
 
-Essentially all logic lives in `src/App.jsx`: a single component holding all state (`useState`), including the transactions list (seeded with hardcoded data, no persistence or backend), form fields, and filters. Totals and filtered lists are derived inline on each render. Styling is in `src/App.css` (plain CSS, class-based) and `src/index.css`.
+`src/App.jsx` is the only stateful parent: it holds the `transactions` array (seeded with hardcoded data, no persistence or backend) and an `addTransaction` handler, and composes three child components:
 
-## Known gotchas
+- `Summary.jsx` — takes `transactions` and computes total income, expenses and balance itself.
+- `TransactionForm.jsx` — owns the form field state; on submit it builds a transaction and calls `onAdd`.
+- `TransactionList.jsx` — takes `transactions` and owns the type/category filter state and the table.
 
-- Transaction `amount` is stored as a **string** (seed data and form input alike, since `<input type="number">` yields strings), but the income/expense totals use `reduce((sum, t) => sum + t.amount, 0)`, which concatenates strings instead of adding. Convert with `Number()` when fixing or touching amounts.
+`src/categories.js` holds the shared category list used by the form and the list. Styling is plain class-based CSS in `src/App.css` and `src/index.css`.
+
+## Conventions and gotchas
+
+- Transaction `amount` is a **number** (seed data and `TransactionForm` convert with `Number()`); keep it numeric so the totals in `Summary` add rather than concatenate.
 - Seed transaction "Freelance Work" is typed `expense` with category `salary`, likely wrong data.
